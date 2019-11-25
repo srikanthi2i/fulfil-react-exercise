@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { TRow, TColumn } from '../../containers/home/Home';
 import Cell from './Cell';
+import { TColumn, TRow } from '../../reducers/home';
 
 export interface IRowProps {
   columns: TColumn[];

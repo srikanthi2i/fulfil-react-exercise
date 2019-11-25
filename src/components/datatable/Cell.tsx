@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TRow, TColumn } from '../../containers/home/Home';
+import { TColumn, TRow } from '../../reducers/home';
 
 interface ICellProps {
   column: TColumn;

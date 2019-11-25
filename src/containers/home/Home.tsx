@@ -1,61 +1,51 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 
 import DataTable from '../../components/datatable/DataTable';
+import { fetchDataRequest } from '../../actions/home';
+import { IReduxState } from '../../reducers';
+import { TRow, TColumn } from '../../reducers/home';
+
+export interface IHomeStateMap {
+  columns: TColumn[];
+  loading: boolean;
+  rows: TRow[];
+}
+
+export interface IHomeDispatchMap {
+  fetchDataList: (cb?: (row: TRow[]) => void) => void;
+}
 
 export interface IHomeProps {
 }
 
-export type TColumn = {
-  id: keyof TRow;
-  label: string;
-  numeric: boolean;
-  width?: string | undefined;
-}
-
-export type TRow = {
-  id: number;
-  product: string | number;
-  price: string | number;
-}
-
 export interface IHomeState {
-  columns: TColumn[];
-  rows: TRow[];
   selectedRows: TRow[];
   visibleRows: TRow[];
 }
 
-class Home extends React.Component<IHomeProps, IHomeState> {
-  constructor(props: IHomeProps) {
+class Home extends React.Component<IHomeProps & IHomeStateMap & IHomeDispatchMap, IHomeState> {
+  constructor(props: IHomeProps & IHomeStateMap & IHomeDispatchMap) {
     super(props);
-    const rows: TRow[] = [];
-    const visibleRows: TRow[] = [];
-    for (let index = 1; index <= 50000; index++) {
-      const row = {
-        id: index,
-        product: `Product-${index}`,
-        price: `$${15.5 + index}`
-      };
-      rows.push(row);
-      if (index < 51) {
-        visibleRows.push(row);
-      }
-    }
     this.state = {
-      columns: [{
-        id: 'product',
-        label: 'Product',
-        numeric: false,
-        width: '200px',
-      }, {
-        id: 'price',
-        label: 'Price',
-        numeric: true,
-      }],
-      rows: [...rows],
       selectedRows: [],
-      visibleRows: [...visibleRows]
+      visibleRows: []
     };
+  }
+
+  componentDidMount() {
+    const cb = (rows: TRow[]) => {
+      console.log('em', rows);
+      const updatedVisibleRows: TRow[] = [];
+      for (let index = 0; index < 50; index++) {
+        const row = rows[index];
+        updatedVisibleRows.push({...row});
+      }
+      this.setState({
+        visibleRows: updatedVisibleRows
+      });
+    }
+    this.props.fetchDataList(cb);
   }
 
   onRowClick = (row: TRow, rowId: number) => {
@@ -73,7 +63,7 @@ class Home extends React.Component<IHomeProps, IHomeState> {
   }
 
   toggleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { rows } = this.state;
+    const { rows } = this.props;
     this.setState({
       selectedRows: e.target.checked ? [...rows]: []
     })
@@ -86,11 +76,13 @@ class Home extends React.Component<IHomeProps, IHomeState> {
   }
 
   public render() {
-    const { columns, rows, selectedRows, visibleRows } = this.state;
+    const { selectedRows, visibleRows } = this.state;
+    const { rows, columns, loading } = this.props;
+    console.log('=========', rows, columns);
     return (
       <main className="Home">
         <h3>Product List</h3>
-        <DataTable 
+        { !loading && <DataTable 
           columns={columns}
           rows={rows}
           selectedRows={selectedRows}
@@ -98,10 +90,21 @@ class Home extends React.Component<IHomeProps, IHomeState> {
           onRowClick={this.onRowClick}
           toggleSelectAll={this.toggleSelectAll}
           onScrollEvent={this.onScrollEvent}
-        />
+        />}
       </main>
     );
   }
 }
 
-export default Home;
+const mapStateToProps = (state: IReduxState) => ({
+  columns: state.home.columns,
+  loading: state.home.loading,
+  rows: state.home.rows
+});
+
+const mapDispatchToProps = (dispatch: any): IHomeDispatchMap => ({
+  fetchDataList: (cb) => dispatch(fetchDataRequest(cb))
+});
+
+export default connect<IHomeStateMap, IHomeDispatchMap, IHomeProps, IReduxState>(mapStateToProps, mapDispatchToProps)(Home);
+

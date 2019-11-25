@@ -6,6 +6,7 @@ interface IHeaderProps extends IDataTableProps {
 }
 
 const Header: React.FunctionComponent<IHeaderProps> = (props) => {
+  console.log('props', props);
   return (
     <div className="DataTable-header">
       <table className="DataTable-table">
