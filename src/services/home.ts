@@ -1,5 +1,4 @@
   
-import axios from 'axios';
 import * as ENDPOINTS from '../globals/constants/api';
 import { client } from '../globals/core/interceptor';
 

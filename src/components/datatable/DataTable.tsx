@@ -1,8 +1,10 @@
 import * as React from 'react';
+
 import Header from './Header';
 import Body from './Body';
-import './DataTable.css';
 import { TColumn, TRow } from '../../reducers/home';
+
+import './DataTable.scss';
 
 export interface IDataTableProps {
   columns: TColumn[];

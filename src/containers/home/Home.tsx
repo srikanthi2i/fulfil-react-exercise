@@ -6,6 +6,8 @@ import { fetchDataRequest } from '../../actions/home';
 import { IReduxState } from '../../reducers';
 import { TRow, TColumn } from '../../reducers/home';
 
+import './Home.scss';
+
 export interface IHomeStateMap {
   columns: TColumn[];
   loading: boolean;
@@ -35,7 +37,6 @@ class Home extends React.Component<IHomeProps & IHomeStateMap & IHomeDispatchMap
 
   componentDidMount() {
     const cb = (rows: TRow[]) => {
-      console.log('em', rows);
       const updatedVisibleRows: TRow[] = [];
       for (let index = 0; index < 50; index++) {
         const row = rows[index];
@@ -58,7 +59,7 @@ class Home extends React.Component<IHomeProps & IHomeStateMap & IHomeDispatchMap
       newSelectedRows.splice(currIndex, 1);
     }
     this.setState({
-      selectedRows: [...newSelectedRows]
+      selectedRows: newSelectedRows
     });
   }
 
@@ -72,13 +73,27 @@ class Home extends React.Component<IHomeProps & IHomeStateMap & IHomeDispatchMap
   onScrollEvent = (e: React.UIEvent<HTMLDivElement>) => {
     const infiniteLoader: any = document.getElementById('infiniteLoader');
     const target: any = e.target;
-    console.log('scroll', target.getBoundingClientRect(), infiniteLoader.getBoundingClientRect());
+    const containerBottom = parseInt(target.getBoundingClientRect().bottom);
+    const loaderBottom = parseInt(infiniteLoader.getBoundingClientRect().bottom);
+    if (loaderBottom === containerBottom) {
+      const { rows } = this.props;
+      const { visibleRows } = this.state;
+      const updatedVisibleRows = [...visibleRows];
+      for (let index = visibleRows.length; index < visibleRows.length + 50; index++) {
+        updatedVisibleRows.push({...rows[index]});
+      }
+      setTimeout(() => {
+        this.setState({
+          visibleRows: updatedVisibleRows
+        });
+      }, 500);
+    }
+
   }
 
   public render() {
     const { selectedRows, visibleRows } = this.state;
     const { rows, columns, loading } = this.props;
-    console.log('=========', rows, columns);
     return (
       <main className="Home">
         <h3>Product List</h3>
@@ -106,5 +121,5 @@ const mapDispatchToProps = (dispatch: any): IHomeDispatchMap => ({
   fetchDataList: (cb) => dispatch(fetchDataRequest(cb))
 });
 
-export default connect<IHomeStateMap, IHomeDispatchMap, IHomeProps, IReduxState>(mapStateToProps, mapDispatchToProps)(Home);
-
+export default connect<IHomeStateMap, IHomeDispatchMap, IHomeProps, IReduxState>
+                (mapStateToProps, mapDispatchToProps)(Home);

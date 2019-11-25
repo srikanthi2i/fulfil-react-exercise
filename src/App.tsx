@@ -2,7 +2,7 @@ import React from 'react';
 
 import Home from './containers/home/Home';
 
-import './App.css';
+import './App.scss';
 
 const App: React.FC = () => {
   return (

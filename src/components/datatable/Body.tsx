@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { IDataTableProps } from './DataTable';
+
 import Row from './Row';
+import { IDataTableProps } from './DataTable';
 
 interface IBodyProps extends IDataTableProps {
 }
@@ -13,7 +14,7 @@ const Body: React.FunctionComponent<IBodyProps> = (props) => {
           {props.visibleRows.map((row) => <Row key={row.id} {...props} row={row}/>)}
         </tbody>
       </table>
-      <div id="infiniteLoader"></div>
+      <div id="infiniteLoader">Loading...</div>
     </div>
   );
 };

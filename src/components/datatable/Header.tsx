@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { IDataTableProps } from './DataTable';
+
 import Cell from './Cell';
+import { IDataTableProps } from './DataTable';
 
 interface IHeaderProps extends IDataTableProps {
 }

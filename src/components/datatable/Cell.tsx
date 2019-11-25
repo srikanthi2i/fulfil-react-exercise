@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { TColumn, TRow } from '../../reducers/home';
 
 interface ICellProps {
@@ -14,11 +15,9 @@ const Cell: React.FunctionComponent<ICellProps> = (props) => {
   };
   return (
     <React.Fragment>
-      {
-        row ?
+      { row ?
         <td className="DataTable-cell" style={{...cellStyle}}>{row[id]}</td> :
-        <th className="DataTable-cell" style={{...cellStyle}}>{label}</th>
-      }
+        <th className="DataTable-cell" style={{...cellStyle}}>{label}</th> }
     </React.Fragment>
   );
 };

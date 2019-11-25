@@ -1,8 +1,10 @@
+@import '../../styles/variables.scss';
+
 .DataTable {
   font-size: 14px;
   text-align: left;
   width: 100%;
-  color: #000000;
+  color: $color-dark;
   overflow: auto;
 }
 
@@ -16,47 +18,42 @@ table.DataTable-table {
   border-collapse: collapse;
 }
 
-.DataTable-header {
-  background-color: rgba(255,255,255,0.3);
-}
-
 .DataTable-body {
   height: 70vh;
   overflow-x: auto;
   margin-top: 0px;
-}
-
-.DataTable-body .DataTable-row:hover {
-  background: linear-gradient(to right, #25c481, #25b7c4);
+  & .DataTable-row:hover {
+    background: $color-grad;
+  }
 }
 
 .DataTable-row {
-  border-bottom: 1px solid #efefef;
+  border-bottom: 1px solid $color-lightgrey;
 }
 
 .DataTable-cell {
   padding: 20px;
   text-align: left;
-}
-
-.DataTable-cell:first-child {
-  width: 56px;
+  &:first-child {
+    width: 56px;
+  }
 }
 
 th.DataTable-cell {
   font-weight: bold;
-  color: #9a9a9a;
+  color: $color-grey;
   text-transform: uppercase;
 }
 
 td.DataTable-cell {
   vertical-align: middle;
   font-weight: 300;
-  color: #000000;
+  color: $color-dark;
 }
 
 #infiniteLoader {
   height: 25px;
   width: 100%;
-  background: aquamarine;
+  background: $grad1;
+  text-align: center;
 }

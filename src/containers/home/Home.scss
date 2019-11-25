@@ -1,0 +1,12 @@
+@import '../../styles/variables.scss';
+
+.Home {
+  text-align: left;
+  background: $color-light;
+  padding: 1em;
+  margin: 1em;
+  border-radius: 8px;
+  color: $color-dark;
+  box-shadow: 0 4px 16px rgba(0,0,0,.12);
+  overflow: auto;
+}
