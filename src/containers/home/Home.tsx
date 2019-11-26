@@ -93,11 +93,11 @@ class Home extends React.Component<IHomeProps & IHomeStateMap & IHomeDispatchMap
 
   public render() {
     const { selectedRows, visibleRows } = this.state;
-    const { rows, columns, loading } = this.props;
+    const { rows, columns } = this.props;
     return (
       <main className="Home">
-        <h3>Product List</h3>
-        { !loading && <DataTable 
+        <h3>Data List</h3>
+        { <DataTable 
           columns={columns}
           rows={rows}
           selectedRows={selectedRows}
@@ -105,7 +105,7 @@ class Home extends React.Component<IHomeProps & IHomeStateMap & IHomeDispatchMap
           onRowClick={this.onRowClick}
           toggleSelectAll={this.toggleSelectAll}
           onScrollEvent={this.onScrollEvent}
-        />}
+        /> }
       </main>
     );
   }

@@ -6,7 +6,6 @@ import { IActionProps } from '../reducers';
 export function* getDataList(action: IActionProps) {
   try {
     const rows = yield call(HomeService.getData);
-    console.log('action', action)
     action.cb(rows);
     yield put(homeActions.fetchDataRequestSuccess(rows));
   } catch (e) {

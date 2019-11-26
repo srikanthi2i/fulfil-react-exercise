@@ -16,7 +16,7 @@ const Cell: React.FunctionComponent<ICellProps> = (props) => {
   return (
     <React.Fragment>
       { row ?
-        <td className="DataTable-cell" style={{...cellStyle}}>{row[id]}</td> :
+        <td className="DataTable-cell" style={{...cellStyle}}>{ id === 'thumbnailUrl' ? <img className="DataTable-img" alt="thumbnail" src={row[id]} /> : row[id]}</td> :
         <th className="DataTable-cell" style={{...cellStyle}}>{label}</th> }
     </React.Fragment>
   );

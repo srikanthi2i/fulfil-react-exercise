@@ -35,6 +35,11 @@ const initialState: IHomeReducer = {
     numeric: true,
     width: '100px'
   }, {
+    id: 'thumbnailUrl',
+    label: '',
+    numeric: false,
+    width: '20px'
+  }, {
     id: 'title',
     label: 'Title',
     numeric: false

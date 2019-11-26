@@ -51,8 +51,12 @@ td.DataTable-cell {
   color: $color-dark;
 }
 
+img.DataTable-img {
+  width: 20px;
+}
+
 #infiniteLoader {
-  height: 25px;
+  height: 20px;
   width: 100%;
   background: $grad1;
   text-align: center;
