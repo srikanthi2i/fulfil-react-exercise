@@ -3,19 +3,20 @@ import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { Provider } from 'react-redux';
-
 import firebase from 'firebase';
+
+import App from './App';
 
 import rootReducer from './reducers';
 import { rootSaga } from './sagas';
 import { setupInterceptors } from './globals/core/interceptor';
-import App from './App';
+import { FIREBASE_API_KEY } from './environments/environments';
 import * as serviceWorker from './serviceWorker';
 
 import './index.scss';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDqeScjJff6JtA_K9S50lJy7-J8i9i5RI4",
+  apiKey: FIREBASE_API_KEY,
   authDomain: "fulfil-react-exercise.firebaseapp.com",
   databaseURL: "https://fulfil-react-exercise.firebaseio.com",
   projectId: "fulfil-react-exercise",

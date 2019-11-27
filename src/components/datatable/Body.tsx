@@ -1,20 +1,37 @@
 import * as React from 'react';
 
 import Row from './Row';
-import { IDataTableProps } from './DataTable';
+import { TRow, TColumn } from '../../reducers/home';
 
-interface IBodyProps extends IDataTableProps {
+interface IBodyProps {
+  columns: TColumn[];
+  rows: TRow[];
+  selectedRows: TRow[];
+  loading: boolean;
+  onScrollEvent: () => void;
+  onRowClick: (rowData: TRow, rowIndex: number) => void;
 }
 
 const Body: React.FunctionComponent<IBodyProps> = (props) => {
+
+  const onScrollEvent = (e: React.UIEvent<HTMLDivElement>) => {
+    const infiniteLoader: any = document.getElementById('infiniteLoader');
+    const target: any = e.target;
+    const containerBottom = parseInt(target.getBoundingClientRect().bottom);
+    const loaderBottom = parseInt(infiniteLoader.getBoundingClientRect().bottom);
+    if (loaderBottom === containerBottom) {
+      props.onScrollEvent();
+    }
+  }
+
   return (
-    <div className="DataTable-body" onScroll={props.onScrollEvent}>
+    <div className="DataTable-body" onScroll={onScrollEvent}>
       <table className="DataTable-table">
         <tbody className="DataTable-body">
-          {props.visibleRows.map((row) => <Row key={row.id} {...props} row={row}/>)}
+          {props.rows.map((row) => <Row key={row.id} {...props} row={row}/>)}
         </tbody>
       </table>
-      <div id="infiniteLoader">Loading...</div>
+      <div id="infiniteLoader">{props.loading ? 'Loading...' : !props.rows.length ? 'Record not found' : 'No more record'}</div>
     </div>
   );
 };

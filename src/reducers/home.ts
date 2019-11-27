@@ -20,6 +20,7 @@ export interface IHomeReducer {
   loading: boolean;
   columns: TColumn[];
   rows: TRow[];
+  isFiltered: boolean;
 }
 
 const initialState: IHomeReducer = {
@@ -48,7 +49,8 @@ const initialState: IHomeReducer = {
     label: 'URL',
     numeric: false
   }],
-  rows: []
+  rows: [],
+  isFiltered: false
 };
 
 export const homeReducer = (state: IHomeReducer = initialState, action: IActionProps): IHomeReducer => {
@@ -57,15 +59,35 @@ export const homeReducer = (state: IHomeReducer = initialState, action: IActionP
     case HOMETYPES.FETCH_DATA_LIST_REQUEST:
       return {
         ...state,
+        rows: state.isFiltered ? [] : state.rows,
+        isFiltered: false,
         loading: true
       };
     case HOMETYPES.FETCH_DATA_LIST_SUCCESS:
       return {
         ...state,
-        rows: [...rows],
+        rows: [...state.rows, ...rows],
         loading: false
       };
     case HOMETYPES.FETCH_DATA_LIST_FAILURE:
+      return {
+        ...state,
+        loading: false
+      };
+    case HOMETYPES.SEARCH_DATA_LIST_REQUEST:
+      return {
+        ...state,
+        rows: state.isFiltered ? action.pageNo === 1 ? [] : state.rows : [],
+        isFiltered: true,
+        loading: true
+      };
+    case HOMETYPES.SEARCH_DATA_LIST_SUCCESS:
+      return {
+        ...state,
+        rows: [...state.rows, ...rows],
+        loading: false
+      };
+    case HOMETYPES.SEARCH_DATA_LIST_FAILURE:
       return {
         ...state,
         loading: false

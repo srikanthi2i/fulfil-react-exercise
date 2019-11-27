@@ -9,28 +9,17 @@ export interface IRowProps {
   onRowClick: (rowData: TRow, rowIndex: number) => void;
 }
 
-export interface IRowState {
-}
+const Row: React.FunctionComponent<IRowProps> = (props) => {
+  const { columns, row, selectedRows, onRowClick } = props;
+  return (
+    <tr className="DataTable-row" onClick={() => onRowClick(row, row.id)}>
+      <td className="DataTable-cell">
+        <input type="checkbox" checked={!!selectedRows.find((selectedRow) => row.id === selectedRow.id)} readOnly/>
+      </td>
+      {columns.map((column) => <Cell key={column.id} row={row} column={column} />)}
+    </tr>
+  );
 
-class Row extends React.Component<IRowProps, IRowState> {
-  constructor(props: IRowProps) {
-    super(props);
-
-    this.state = {
-    }
-  }
-
-  public render() {
-    const { columns, row, selectedRows, onRowClick } = this.props;
-    return (
-      <tr className="DataTable-row" onClick={() => onRowClick(row, row.id)}>
-        <td className="DataTable-cell">
-          <input type="checkbox" checked={!!selectedRows.find((selectedRow) => row.id === selectedRow.id)} readOnly/>
-        </td>
-        {columns.map((column) => <Cell key={column.id} row={row} column={column} />)}
-      </tr>
-    );
-  }
 }
 
 export default Row;

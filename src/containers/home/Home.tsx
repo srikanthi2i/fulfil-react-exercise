@@ -2,51 +2,48 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import DataTable from '../../components/datatable/DataTable';
-import { fetchDataRequest } from '../../actions/home';
+import { fetchDataRequest, searchDataRequest } from '../../actions/home';
 import { IReduxState } from '../../reducers';
 import { TRow, TColumn } from '../../reducers/home';
+import { DATA_LIMIT } from '../../globals/constants/app';
 
 import './Home.scss';
 
 export interface IHomeStateMap {
   columns: TColumn[];
+  isFiltered: boolean;
   loading: boolean;
   rows: TRow[];
 }
 
 export interface IHomeDispatchMap {
-  fetchDataList: (cb?: (row: TRow[]) => void) => void;
+  fetchDataList: (pageNo: number, limit: number) => void;
+  searchDataList: (searchText: string, filter: string, pageNo: number) => void;
 }
 
 export interface IHomeProps {
 }
 
 export interface IHomeState {
+  filter: string;
+  pageNo: number;
+  searchText: string;
   selectedRows: TRow[];
-  visibleRows: TRow[];
 }
 
 class Home extends React.Component<IHomeProps & IHomeStateMap & IHomeDispatchMap, IHomeState> {
   constructor(props: IHomeProps & IHomeStateMap & IHomeDispatchMap) {
     super(props);
     this.state = {
-      selectedRows: [],
-      visibleRows: []
-    };
+      filter: '',
+      pageNo: 1,
+      searchText: '',
+      selectedRows: []
+    }
   }
 
   componentDidMount() {
-    const cb = (rows: TRow[]) => {
-      const updatedVisibleRows: TRow[] = [];
-      for (let index = 0; index < 50; index++) {
-        const row = rows[index];
-        updatedVisibleRows.push({...row});
-      }
-      this.setState({
-        visibleRows: updatedVisibleRows
-      });
-    }
-    this.props.fetchDataList(cb);
+    this.props.fetchDataList(this.state.pageNo, DATA_LIMIT);
   }
 
   onRowClick = (row: TRow, rowId: number) => {
@@ -63,37 +60,44 @@ class Home extends React.Component<IHomeProps & IHomeStateMap & IHomeDispatchMap
     });
   }
 
-  toggleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { rows } = this.props;
+  onToggleSelectAll = (selectedRows: TRow[]) => {
     this.setState({
-      selectedRows: e.target.checked ? [...rows]: []
-    })
+      selectedRows
+    });
   }
 
-  onScrollEvent = (e: React.UIEvent<HTMLDivElement>) => {
-    const infiniteLoader: any = document.getElementById('infiniteLoader');
-    const target: any = e.target;
-    const containerBottom = parseInt(target.getBoundingClientRect().bottom);
-    const loaderBottom = parseInt(infiniteLoader.getBoundingClientRect().bottom);
-    if (loaderBottom === containerBottom) {
-      const { rows } = this.props;
-      const { visibleRows } = this.state;
-      const updatedVisibleRows = [...visibleRows];
-      for (let index = visibleRows.length; index < visibleRows.length + 50; index++) {
-        updatedVisibleRows.push({...rows[index]});
-      }
-      setTimeout(() => {
-        this.setState({
-          visibleRows: updatedVisibleRows
-        });
-      }, 500);
-    }
+  onScrollEvent = () => {
+    const { pageNo, searchText, filter } = this.state;
+    const { isFiltered } = this.props;
+    const nextPageNo = pageNo + 1;
+    this.setState({
+      pageNo: nextPageNo
+    });
+    isFiltered ? this.props.searchDataList(searchText, filter, nextPageNo) :
+      this.props.fetchDataList(nextPageNo, DATA_LIMIT);
+  }
 
+  onSearch = (searchText: string, filter: string) => {
+    if (searchText) {
+      this.setState({
+        selectedRows: [],
+        pageNo: 1,
+        searchText,
+        filter
+      });
+      this.props.searchDataList(searchText, filter, 1);
+    } else {
+      this.setState({
+        pageNo: 1,
+        selectedRows: [],
+      });
+      this.props.fetchDataList(1, DATA_LIMIT);
+    }
   }
 
   public render() {
-    const { selectedRows, visibleRows } = this.state;
-    const { rows, columns } = this.props;
+    const { rows, columns, loading } = this.props;
+    const { selectedRows } = this.state;
     return (
       <main className="Home">
         <h3>Data List</h3>
@@ -101,10 +105,11 @@ class Home extends React.Component<IHomeProps & IHomeStateMap & IHomeDispatchMap
           columns={columns}
           rows={rows}
           selectedRows={selectedRows}
-          visibleRows={visibleRows}
+          loading={loading}
           onRowClick={this.onRowClick}
-          toggleSelectAll={this.toggleSelectAll}
+          onToggleSelectAll={this.onToggleSelectAll}
           onScrollEvent={this.onScrollEvent}
+          onSearch={this.onSearch}
         /> }
       </main>
     );
@@ -113,12 +118,14 @@ class Home extends React.Component<IHomeProps & IHomeStateMap & IHomeDispatchMap
 
 const mapStateToProps = (state: IReduxState) => ({
   columns: state.home.columns,
+  isFiltered: state.home.isFiltered,
   loading: state.home.loading,
   rows: state.home.rows
 });
 
 const mapDispatchToProps = (dispatch: any): IHomeDispatchMap => ({
-  fetchDataList: (cb) => dispatch(fetchDataRequest(cb))
+  fetchDataList: (pageNo, limit) => dispatch(fetchDataRequest(pageNo, limit)),
+  searchDataList: (searchText, filter, pageNo) => dispatch(searchDataRequest(searchText, filter, pageNo))
 });
 
 export default connect<IHomeStateMap, IHomeDispatchMap, IHomeProps, IReduxState>
